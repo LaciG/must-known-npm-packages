@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
+var bodyParser = require('body-parser');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+var apiRouter = require('./api');
+var webRouter = require('./web');
 
-module.exports = router;
+const users = require('../controllers/userController');
+
+module.exports = function (app) {
+  app.use(bodyParser.urlencoded({ extended: true}));
+  app.use('/api', apiRouter);
+  app.use('/', webRouter);
+}
+
+
