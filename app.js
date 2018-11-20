@@ -8,6 +8,8 @@ let sequelize = require('sequelize');
 let json = require('jsonwebtoken');
 let sha256 = require('sha256');
 let cors = require('cors');
+var session = require('express-session');
+var flash = require('req-flash');
 
 
 let port = process.env.PORT || 5000;
@@ -24,6 +26,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var sessionStore = new session.MemoryStore;
+
+app.use(session({
+  cookie: { maxAge: 60000 },
+  store: sessionStore,
+  saveUninitialized: true,
+  resave: 'true',
+  secret: 'secret'
+}));
+app.use(flash());
 
 require('./routes/index.js')(app);
 

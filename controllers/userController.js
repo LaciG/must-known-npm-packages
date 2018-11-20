@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
+var Models = require('../models/index');
+const Joi = require('joi');
+const multer = require('multer')();
+const cookieParser = require('cookie-parser');
 
-var User = require('../models/user');
-
-var Index = require('../models/index');
+var session = require('express-session');
+var flash = require('req-flash');
 
 var appData = {};
 
@@ -14,34 +17,29 @@ var appData = {};
     res.status(201).json(appData);
 }; */
 
+const registerSchema = Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required().strip()
+});
 
-exports.register = (req, res) => {
-    return Index.User.count({ where: {email: req.body.email} })
-        .then(count => {
-            if (count != 0) {
-                appData["error"] = 1;
-                appData["data"] = "Taken Email";
-                res.status(409).json(appData);
-            }else {
-                Index.User.create({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password
-              })
-              .then(user => {
-                appData["error"] = 1;
-                appData["data"] = "User Registered";
-                res.status(201).json(appData);
-              })
-              .catch(error => {
-                console.log('This error Occured', error);
-              });
-            }
-        });
-};
+const loginSchema = Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required().strip()
+});
+
+exports.register = (multer.array(), (req, res) => {
+    console.log(req.body);
+    const { error, value } = Joi.validate(req.body, registerSchema);
+    if (error) {
+        req.flash('error', 'This is a flash message using the express-flash module.');
+        res.render('/');
+    }
+    console.log(req.body);
+    res.redirect('/loggedin');
+})
 
 exports.login = (req, res) => {
-    Index.User.findOne({
+    Models.User.findOne({
         where: {
             email: req.body.email
         }

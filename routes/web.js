@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function(req, res) {
-    res.render('index', { title: 'Title param'});
-});
+const userController = require('../controllers/userController');
+const siteController = require('../controllers/siteController');
+
+router.get('/', siteController.showHome);
 
 module.exports = router;
