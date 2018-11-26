@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-const userController = require('../controllers/userController');
-const siteController = require('../controllers/siteController');
+var siteController = require('../controllers/siteController');
+var userController = require('../controllers/userController');
 
-router.get('/', siteController.showHome);
+router.get('/', siteController.index);
+router.get('/login', siteController.showLogin);
+router.get('/register', siteController.showRegister);
+
+router.post("/users/register", userController.register);
 
 module.exports = router;

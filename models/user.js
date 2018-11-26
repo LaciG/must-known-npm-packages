@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     name: {
-      allowNull: true,
+      allowNull: false,
+      type: DataTypes.STRING(200)
+    },
+    username: {
+      alluwNull: false,
       type: DataTypes.STRING(200)
     },
     email: {
@@ -21,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'user',
+    instanceMethods: {
+      generateHash(password) {
+          return bcrypt.hash(password, bcrypt.genSaltSync(8));
+      },
+      validPassword(password) {
+          return bcrypt.compare(password, this.password);
+      }
+  }
   });
   User.associate = function(models) {
     // associations can be defined here
